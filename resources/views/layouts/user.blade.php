@@ -23,12 +23,10 @@
                             Daftar Lelang
                         </a>
                         
-                        {{-- Hanya tampilkan History & Pemenang jika sudah login --}}
                         @auth
                             <a href="#" class="hover:text-teal-300 transition">History Bid</a>
                             <a href="#" class="hover:text-teal-300 transition">Daftar Pemenang</a>
                             
-                            {{-- Link Tambahan jika Admin sedang melihat tampilan User --}}
                             @if(Auth::user()->role === 'admin')
                                 <a href="{{ route('admin.dashboard') }}" class="text-orange-400 hover:text-orange-300 transition underline underline-offset-4">
                                     Kembali Ke Panel Admin
@@ -38,30 +36,33 @@
                     </div>
                 </div>
 
-                {{-- Bagian Kanan: User Profile / Login --}}
+                {{-- Bagian Kanan: Autentikasi --}}
                 <div class="flex items-center gap-4">
                     @auth
+                        {{-- Tampilan saat User LOGIN --}}
                         <div class="flex items-center gap-4">
-                            <div class="text-right hidden sm:block">
+                            <div class="text-right hidden sm:block border-r border-teal-600 pr-4">
                                 <p class="text-[10px] text-teal-300 font-black uppercase tracking-tighter leading-none">Logged in as</p>
                                 <p class="text-xs font-bold uppercase">{{ Auth::user()->name }}</p>
                             </div>
                             
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="text-xs font-bold text-white bg-teal-800 hover:bg-teal-900 px-4 py-2 rounded-lg transition uppercase tracking-widest shadow-md">
+                                <button type="submit" class="text-xs font-bold text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg transition uppercase tracking-widest shadow-md">
                                     Logout
                                 </button>
                             </form>
                         </div>
                     @else
-                        {{-- Tampilkan jika belum login (Tamu) --}}
-                        <a href="{{ route('login') }}" class="text-xs font-bold uppercase tracking-widest hover:text-teal-300 transition">
-                            Login
-                        </a>
-                        <a href="{{ route('register') }}" class="bg-white text-teal-700 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-teal-50 transition shadow-md">
-                            Daftar Akun
-                        </a>
+                        {{-- Tampilan saat User BELUM LOGIN (GUEST) --}}
+                        <div class="flex items-center gap-4">
+                            <a href="{{ route('login') }}" class="text-xs font-bold uppercase tracking-widest hover:text-teal-300 transition">
+                                Login
+                            </a>
+                            <a href="{{ route('register') }}" class="bg-white text-teal-700 px-4 py-2 rounded-lg text-xs font-black uppercase tracking-widest hover:bg-teal-50 transition shadow-md border border-transparent">
+                                Daftar Akun
+                            </a>
+                        </div>
                     @endauth
                 </div>
             </div>

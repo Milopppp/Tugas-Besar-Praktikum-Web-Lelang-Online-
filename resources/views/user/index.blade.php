@@ -38,9 +38,8 @@
             </div>
 
             <div class="p-8">
-                {{-- Revisi: nama menjadi nama_barang --}}
                 <h3 class="font-black text-xl text-gray-800 mb-3 uppercase tracking-tight group-hover:text-teal-600 transition">
-                    {{ $auction->item->nama_barang }}
+                    {{ $auction->item->nama }}
                 </h3>
                 <p class="text-gray-500 text-sm mb-6 leading-relaxed line-clamp-2 italic">
                     {{ $auction->item->deskripsi_barang }}
