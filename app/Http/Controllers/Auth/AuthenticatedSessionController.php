@@ -25,14 +25,18 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
+
         $request->session()->regenerate();
 
+        // Ambil data user yang login
+        $user = auth()->user();
+
         // Logika Pengalihan Berdasarkan Role
-        if (auth()->user()->role === 'admin') { // Pastikan kolomnya 'role' atau 'level'
+        if ($user->role === 'admin') {
             return redirect()->intended(route('admin.dashboard'));
         }
 
-        // Jika role-nya adalah 'user'
+        // Arahkan ke rute katalog untuk user biasa
         return redirect()->intended(route('user.index'));
     }
 

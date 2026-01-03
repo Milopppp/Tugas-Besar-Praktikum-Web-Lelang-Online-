@@ -9,12 +9,11 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| RUTE PUBLIK: Langsung ke Login
+| RUTE PUBLIK: Semua orang bisa melihat katalog
 |--------------------------------------------------------------------------
 */
-Route::get('/', function () {
-    return view('auth.login');
-});
+// Sekarang halaman utama langsung menampilkan katalog lelang
+Route::get('/', [LandingController::class, 'index'])->name('user.index');
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +22,8 @@ Route::get('/', function () {
 */
 Route::middleware('auth')->group(function () {
     
-    // 1. HALAMAN UTAMA USER (Katalog Baru Muncul Setelah Login)
-    Route::get('/katalog', [LandingController::class, 'index'])->name('user.index');
+    // 1. FITUR TAWAR (Hanya muncul/bisa diakses setelah login)
+    // Pengunjung publik hanya bisa lihat katalog, tapi klik detail/tawar wajib login
     Route::get('/user/detail/{id}', [LandingController::class, 'show'])->name('user.show');
 
     // 2. RUTE PROFIL

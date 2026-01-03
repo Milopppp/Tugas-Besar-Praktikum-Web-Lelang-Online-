@@ -11,14 +11,19 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // --- TAMBAHKAN ALIAS DI SINI ---
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\IsAdmin::class,
+        ]);
+
         $middleware->redirectTo(
             guests: '/login',
             users: function ($request) {
-                // Jika user mencoba akses /login tapi sudah login, arahkan sesuai role
-                if ($request->user()->level === 'admin') {
+                // Gunakan 'role' sesuai kolom database Anda
+                if ($request->user()->role === 'admin') { 
                     return '/admin/dashboard';
                 }
-                return '/';
+                return '/katalog';
             }
         );
     })
