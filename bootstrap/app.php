@@ -16,13 +16,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
 
         $middleware->redirectTo(
-            // Hapus atau ganti rute pengalihan tamu agar tidak otomatis ke /login
-            guests: '/login', 
+            guests: '/login', // Ini hanya berlaku jika rute dibungkus middleware 'auth'
             users: function ($request) {
+                // Jika user sudah login dan mencoba akses rute guest (seperti /login)
                 if ($request->user()->role === 'admin') {
                     return '/admin/dashboard';
                 }
-                return '/'; // User biasa kembali ke katalog utama
+                return '/';
             }
         );
     })
