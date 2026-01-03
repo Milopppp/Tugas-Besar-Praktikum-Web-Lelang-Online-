@@ -9,36 +9,41 @@ use Illuminate\Support\Facades\Auth;
 
 class BidController extends Controller
 {
-    public function store(Request $request, $auctionId)
+    public function store(Request $request, $id)
     {
+        // Validasi input
         $request->validate([
             'harga_penawaran' => 'required|numeric',
         ]);
 
-        $auction = Auction::with('item')->findOrFail($auctionId);
+        // Cari data lelang
+        $auction = Auction::with('item')->findOrFail($id);
 
-        // REVISI: Pastikan lelang masih dibuka
+        // Cek status lelang masih dibuka atau tidak
         if ($auction->status !== 'dibuka') {
             return back()->with('error', 'Maaf, lelang sudah ditutup.');
         }
 
-        $maxBid = Bid::where('auction_id', $auctionId)->max('penawaran_harga');
+        // Ambil tawaran tertinggi saat ini
+        $maxBid = Bid::where('auction_id', $id)->max('penawaran_harga');
         $hargaMinimal = $maxBid ?: $auction->item->harga_awal;
 
+        // Validasi harga harus lebih tinggi
         if ($request->harga_penawaran <= $hargaMinimal) {
             return back()->with('error', 'Tawaran harus lebih tinggi dari Rp ' . number_format($hargaMinimal, 0, ',', '.'));
         }
 
+        // Simpan data bid
         Bid::create([
-            'auction_id' => $auctionId,
+            'auction_id' => $id,
             'user_id' => Auth::id(),
             'penawaran_harga' => $request->harga_penawaran,
             'tgl_penawaran' => now(), 
         ]);
 
-        // REVISI: Update harga tertinggi di tabel auctions
+        // Update harga_akhir di tabel auctions
         $auction->update(['harga_akhir' => $request->harga_penawaran]);
 
-        return back()->with('success', 'Penawaran Anda berhasil dikirim!');
+        return back()->with('success', 'Penawaran berhasil dikirim!');
     }
 }
