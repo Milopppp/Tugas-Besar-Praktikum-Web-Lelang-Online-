@@ -9,10 +9,10 @@ use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
-| RUTE PUBLIK (Bisa Diakses Tanpa Login)
+| RUTE PUBLIK (Dapat dilihat tanpa login)
 |--------------------------------------------------------------------------
 */
-// Halaman utama langsung menampilkan katalog barang lelang
+// Halaman utama menampilkan katalog lelang secara langsung
 Route::get('/', [LandingController::class, 'index'])->name('user.index');
 
 /*
@@ -22,41 +22,31 @@ Route::get('/', [LandingController::class, 'index'])->name('user.index');
 */
 Route::middleware('auth')->group(function () {
     
-    // Fitur User: Detail dan Tawar Barang
+    // Detail lelang hanya bisa dilihat setelah login
     Route::get('/user/detail/{id}', [LandingController::class, 'show'])->name('user.show');
 
-    // Manajemen Profil
+    // Rute Profil
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
-    /*
-    |--------------------------------------------------------------------------
-    | GROUP KHUSUS ADMIN (Middleware IsAdmin)
-    |--------------------------------------------------------------------------
-    */
+    // --- AREA ADMIN (Hanya Role Admin) ---
     Route::middleware(['admin'])->group(function () {
-        
-        // Dashboard Admin
         Route::get('/admin/dashboard', function () {
             $totalBarang = \App\Models\Item::count();
             $lelangAktif = \App\Models\Auction::where('status', 'dibuka')->count();
             return view('admin.index', compact('totalBarang', 'lelangAktif')); 
         })->name('admin.dashboard');
 
-        // CRUD Barang
         Route::resource('/admin/items', ItemController::class)->names('admin.items');
-
-        // Manajemen Lelang
+        Route::resource('/admin/items', ItemController::class)->names('admin.items');
+        Route::resource('/admin/auctions', AuctionController::class)->names('admin.auctions');
         Route::post('/admin/auctions/{id}/open', [AuctionController::class, 'open'])->name('admin.auctions.open');
         Route::post('/admin/auctions/{id}/close', [AuctionController::class, 'close'])->name('admin.auctions.close');
-        Route::resource('/admin/auctions', AuctionController::class)->names('admin.auctions');
-
-        // Manajemen User
+        
         Route::get('/admin/users', [UserController::class, 'index'])->name('admin.users.index');
         Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])->name('admin.users.destroy');
     });
 });
 
-// Memuat rute login/register dari Breeze
 require __DIR__.'/auth.php';

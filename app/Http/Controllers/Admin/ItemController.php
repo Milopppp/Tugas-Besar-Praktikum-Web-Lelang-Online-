@@ -30,39 +30,43 @@ class ItemController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-public function store(Request $request)
-{
-    $request->validate([
-        'nama' => 'required|string|max:255',
-        'harga_awal' => 'required|numeric',
-        'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Maksimal 2MB
-        'deskripsi' => 'nullable|string',
-    ]);
+    public function store(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'harga_awal' => 'required|numeric',
+            'foto' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // Maksimal 2MB
+            'deskripsi' => 'nullable|string',
+        ]);
 
-    $data = [
-        'nama' => $request->nama,
-        'harga_awal' => $request->harga_awal,
-        'deskripsi_barang' => $request->deskripsi,
-    ];
+        $data = [
+            'nama' => $request->nama,
+            'harga_awal' => $request->harga_awal,
+            'deskripsi_barang' => $request->deskripsi,
+        ];
 
-    // Cek jika ada file foto yang diunggah
-    if ($request->hasFile('foto')) {
-        $file = $request->file('foto');
-        $nama_file = time() . "_" . $file->getClientOriginalName();
-        $file->move(public_path('images/items'), $nama_file);
-        $data['foto'] = $nama_file; // Simpan nama file ke kolom 'foto'
+        // Cek jika ada file foto yang diunggah
+        if ($request->hasFile('foto')) {
+            $file = $request->file('foto');
+            $nama_file = time() . "_" . $file->getClientOriginalName();
+            $file->move(public_path('images/items'), $nama_file);
+            $data['foto'] = $nama_file; // Simpan nama file ke kolom 'foto'
+        }
+
+        \App\Models\Item::create($data);
+
+        return redirect()->route('admin.items.index')->with('success', 'Barang berhasil disimpan!');
     }
-
-    \App\Models\Item::create($data);
-
-    return redirect()->route('admin.items.index')->with('success', 'Barang berhasil disimpan!');
-}
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show($id)
     {
-        //
+        // Mengambil data barang berdasarkan ID
+        $item = \App\Models\Item::findOrFail($id);
+
+        // Pastikan diarahkan ke folder admin dan file show
+        return view('admin.items.show', compact('item'));
     }
 
     /**
