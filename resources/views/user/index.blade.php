@@ -2,17 +2,6 @@
 
 @section('content')
 
-<div class="absolute top-4 right-4 z-50">
-    @guest
-        <a href="{{ route('login') }}" class="text-white bg-teal-800 px-4 py-2 rounded-lg">Admin / User Login</a>
-    @else
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button type="submit" class="text-white bg-red-600 px-4 py-2 rounded-lg">Logout ({{ Auth::user()->name }})</button>
-        </form>
-    @endguest
-</div>
-
 <div class="bg-teal-600 py-24 text-center text-white relative overflow-hidden">
     <div class="relative z-10">
         <h1 class="text-5xl font-black mb-4 uppercase tracking-[0.2em] italic shadow-sm">NGAB AUCTION</h1>
