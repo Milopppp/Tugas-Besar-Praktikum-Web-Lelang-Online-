@@ -2,7 +2,11 @@
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 py-16">
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> e5bb699c675c6a38838ff727ce6e89181db2ee63
     {{-- Header --}}
     <div class="mb-12">
         <h1 class="text-5xl font-black text-black uppercase mb-2">🏆 Daftar Pemenang</h1>
@@ -22,7 +26,11 @@
 
                 <div class="bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 {{ $isMyWin ? 'border-yellow-400' : 'border-gray-700' }} hover:border-blue-500 transition">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<<<<<<< HEAD
 
+=======
+                        
+>>>>>>> e5bb699c675c6a38838ff727ce6e89181db2ee63
                         {{-- Gambar Barang --}}
                         <div class="relative bg-gray-900 p-6 flex items-center justify-center">
                             @if($auction->item->foto)
@@ -144,4 +152,8 @@
     @endif
 
 </div>
+<<<<<<< HEAD
 @endsection
+=======
+@endsection
+>>>>>>> e5bb699c675c6a38838ff727ce6e89181db2ee63
