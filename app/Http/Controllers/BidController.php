@@ -46,4 +46,39 @@ class BidController extends Controller
 
         return back()->with('success', 'Penawaran berhasil dikirim!');
     }
+
+    // TAMBAHKAN METHOD INI ← PENTING!
+    public function history()
+    {
+        // Ambil semua bid milik user yang login, beserta data auction dan item
+        $myBids = Bid::with(['auction.item', 'auction.bids'])
+            ->where('user_id', Auth::id())
+            ->latest()
+            ->get()
+            ->groupBy('auction_id'); // Group by auction agar tidak duplikat
+
+        return view('user.history-bid', compact('myBids'));
+    }
+
+    public function winners()
+    {
+        // Ambil semua lelang yang sudah ditutup
+        $closedAuctions = Auction::with(['item', 'bids.user'])
+            ->where('status', 'ditutup')
+            ->latest()
+            ->get();
+
+        // Untuk setiap lelang, tentukan pemenangnya (bid tertinggi)
+        $winners = $closedAuctions->map(function($auction) {
+            $winningBid = $auction->bids()->orderBy('penawaran_harga', 'desc')->first();
+            
+            return [
+                'auction' => $auction,
+                'winning_bid' => $winningBid,
+                'winner' => $winningBid ? $winningBid->user : null,
+            ];
+        });
+
+        return view('user.winners', compact('winners'));
+    }
 }

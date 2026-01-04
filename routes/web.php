@@ -24,6 +24,14 @@ Route::middleware('auth')->group(function () {
     Route::post('/lelang/{id}/bid', [BidController::class, 'store'])
         ->name('user.bid.store');
 
+    Route::get('/user/winners', [BidController::class, 'winners'])
+    ->name('user.winners');
+
+    Route::get('/user/history-bid', [BidController::class, 'history'])
+        ->middleware('auth')
+        ->name('user.history.bid');
+
+
     // =====================
     // PROFILE
     // =====================
@@ -36,10 +44,14 @@ Route::middleware('auth')->group(function () {
     // =====================
     Route::middleware(['admin'])->group(function () {
 
-        Route::get('/admin/dashboard', function () {
-            $totalBarang = \App\Models\Item::count();
-            $lelangAktif = \App\Models\Auction::where('status', 'dibuka')->count();
-            return view('admin.index', compact('totalBarang', 'lelangAktif')); 
+       Route::get('/admin/dashboard', function () {
+            $stats = [
+                'total_barang'  => \App\Models\Item::count(),
+                'lelang_active' => \App\Models\Auction::where('status', 'dibuka')->count(),
+                'total_bid'     => \App\Models\Bid::count(),
+                'total_user'    => \App\Models\User::where('role', 'user')->count(),
+            ];
+            return view('admin.index', compact('stats')); // Memanggil file admin/index.blade.php
         })->name('admin.dashboard');
 
         Route::resource('/admin/items', ItemController::class)->names('admin.items');
