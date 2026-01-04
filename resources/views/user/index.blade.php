@@ -1,69 +1,58 @@
 @extends('layouts.user')
 
 @section('content')
-
-<div class="bg-teal-600 py-24 text-center text-white relative overflow-hidden">
-    <div class="relative z-10">
-        <h1 class="text-5xl font-black mb-4 uppercase tracking-[0.2em] italic shadow-sm">NGAB AUCTION</h1>
-        <p class="text-teal-100 text-lg font-medium opacity-80 italic">Katalog Barang Lelang Berkualitas</p>
+<div class="py-16">
+    {{-- Hero Section --}}
+    <div class="bg-gradient-to-r from-blue-900 to-gray-800 py-20 mb-12">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <h1 class="text-6xl font-black text-white uppercase italic mb-4">LELANG <span class="text-blue-400">PRO</span></h1>
+            <p class="text-gray-300 text-xl">Katalog Barang Lelang Berkualitas</p>
+        </div>
     </div>
-</div>
 
-<div class="max-w-7xl mx-auto px-4 py-16">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-        @forelse($auctions as $auction)
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden group hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-gray-100">
-            <div class="h-64 bg-slate-200 relative overflow-hidden">
-                {{-- Gunakan foto dari database jika ada --}}
-                @if($auction->item->foto)
-                    <img src="{{ asset('images/items/' . $auction->item->foto) }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-700">
-                @else
-                    <img src="https://via.placeholder.com/600x400" class="w-full h-full object-cover">
-                @endif
-                
-                <div class="absolute top-4 left-4">
-                    <span class="bg-emerald-500 text-white text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest shadow-lg">Aktif</span>
-                </div>
-            </div>
+    {{-- List Lelang --}}
+    <div class="max-w-7xl mx-auto px-4">
+        @if($auctions->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($auctions as $auction)
+                    <div class="bg-gray-800 rounded-2xl overflow-hidden border border-gray-700 hover:border-blue-500 transition shadow-xl hover:shadow-2xl">
+                        {{-- Badge --}}
+                        <div class="relative">
+                            @if($auction->item->foto)
+                                <img src="{{ asset('images/items/' . $auction->item->foto) }}" class="w-full h-56 object-cover">
+                            @else
+                                <div class="w-full h-56 bg-gray-700 flex items-center justify-center">
+                                    <span class="text-gray-500 text-6xl">📦</span>
+                                </div>
+                            @endif
+                            <span class="absolute top-3 left-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                                AKTIF
+                            </span>
+                        </div>
 
-            <div class="p-8">
-                <h3 class="font-black text-xl text-gray-800 mb-3 uppercase tracking-tight group-hover:text-teal-600 transition">
-                    {{ $auction->item->nama }}
-                </h3>
-                <p class="text-gray-500 text-sm mb-6 leading-relaxed line-clamp-2 italic">
-                    {{ $auction->item->deskripsi_barang }}
-                </p>
-                
-                <div class="flex justify-between items-center border-t border-gray-50 pt-6">
-                    <div>
-                        <p class="text-[10px] text-gray-400 font-black uppercase tracking-widest">Mulai Dari</p>
-                        {{-- Revisi: harga_awal --}}
-                        <p class="text-lg font-black text-gray-900 tracking-tighter">
-                            Rp {{ number_format($auction->item->harga_awal, 0, ',', '.') }}
-                        </p>
+                        {{-- Content --}}
+                        <div class="p-6">
+                            <h3 class="text-2xl font-black text-white uppercase mb-3">{{ $auction->item->nama }}</h3>
+                            
+                            <div class="bg-blue-900/30 p-4 rounded-xl mb-4 border border-blue-800">
+                                <p class="text-xs text-blue-400 font-bold uppercase mb-1">Harga Awal</p>
+                                <p class="text-2xl font-black text-blue-400">Rp {{ number_format($auction->item->harga_awal, 0, ',', '.') }}</p>
+                            </div>
+
+                            <a href="{{ route('user.show', $auction->id) }}" class="block w-full bg-blue-600 text-white text-center py-3 rounded-xl font-bold uppercase hover:bg-blue-500 transition">
+                                Lihat Detail & Bid
+                            </a>
+                        </div>
                     </div>
-
-                    {{-- LOGIKA REVISI: Cek Auth --}}
-                    @auth
-                        <a href="{{ route('user.show', $auction->id) }}" 
-                           class="bg-teal-600 hover:bg-teal-700 text-white px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest shadow-md transition transform active:scale-95">
-                            Tawar Sekarang
-                        </a>
-                    @else
-                        <a href="{{ route('login') }}" 
-                           onclick="return confirm('Anda harus login terlebih dahulu untuk melihat detail dan melakukan penawaran.')"
-                           class="bg-gray-800 hover:bg-gray-900 text-white px-6 py-2.5 rounded-lg font-black text-xs uppercase tracking-widest shadow-md transition">
-                            Login & Tawar
-                        </a>
-                    @endauth
-                </div>
+                @endforeach
             </div>
-        </div>
-        @empty
-        <div class="col-span-full text-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-200">
-            <p class="text-gray-400 font-medium italic">Saat ini tidak ada barang yang sedang dilelang.</p>
-        </div>
-        @endforelse
+        @else
+            <div class="bg-gray-800 rounded-3xl p-16 text-center border-2 border-dashed border-gray-700">
+                <div class="text-8xl mb-6">🔍</div>
+                <h2 class="text-3xl font-black text-white uppercase mb-4">Belum Ada Lelang Aktif</h2>
+                <p class="text-gray-400 text-lg">Saat ini belum ada lelang yang sedang dibuka</p>
+            </div>
+        @endif
     </div>
 </div>
 @endsection
