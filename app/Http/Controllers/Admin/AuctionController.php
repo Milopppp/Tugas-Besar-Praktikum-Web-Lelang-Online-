@@ -11,13 +11,33 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class AuctionController extends Controller
 {
-    public function index()
+   public function index(Request $request)
     {
-        // Revisi: Tambahkan sorting agar yang 'dibuka' muncul di atas
-        $auctions = Auction::with('item')
-                    ->orderByRaw("status = 'dibuka' DESC")
-                    ->orderBy('created_at', 'desc')
-                    ->get();
+        // Memulai query dengan relasi item
+        $query = \App\Models\Auction::with('item');
+
+        // LOGIKA SORTING
+        if ($request->sort == 'nama_az') {
+            // Karena nama barang ada di tabel 'items', kita perlu join
+            $query->join('items', 'auctions.item_id', '=', 'items.id')
+                ->select('auctions.*')
+                ->orderBy('items.nama', 'asc');
+        } 
+        elseif ($request->sort == 'nama_za') {
+            $query->join('items', 'auctions.item_id', '=', 'items.id')
+                ->select('auctions.*')
+                ->orderBy('items.nama', 'desc');
+        } 
+        elseif ($request->sort == 'waktu_lama') {
+            $query->orderBy('created_at', 'asc');
+        } 
+        else {
+            // Default: Terbaru
+            $query->orderBy('created_at', 'desc');
+        }
+
+        $auctions = $query->get();
+
         return view('admin.auctions.index', compact('auctions'));
     }
 

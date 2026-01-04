@@ -8,11 +8,36 @@
     <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
         <div>
             <h3 class="font-bold text-gray-800 text-lg">Manajemen Sesi Lelang</h3>
-            <p class="text-xs text-gray-500 mt-1">Buka atau tutup sesi penawaran barang di sini.</p>
+            <p class="text-xs text-gray-500 mt-1">Gunakan tombol di bawah untuk menyortir urutan data.</p>
         </div>
         <a href="{{ route('admin.auctions.create') }}" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg text-sm font-bold transition flex items-center gap-2 shadow-sm">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
             Buka Lelang Baru
+        </a>
+    </div>
+
+    {{-- BARIS TOMBOL SORTING (HANYA NAMA & WAKTU) --}}
+    <div class="px-6 py-3 bg-white border-b border-gray-50 flex items-center gap-3">
+        <span class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Sort By:</span>
+        
+        <a href="{{ route('admin.auctions.index', ['sort' => 'nama_az']) }}" 
+           class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition {{ request('sort') == 'nama_az' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+           Nama (A-Z)
+        </a>
+
+        <a href="{{ route('admin.auctions.index', ['sort' => 'nama_za']) }}" 
+           class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition {{ request('sort') == 'nama_za' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+           Nama (Z-A)
+        </a>
+
+        <a href="{{ route('admin.auctions.index', ['sort' => 'terbaru']) }}" 
+           class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition {{ request('sort') == 'terbaru' || !request('sort') ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+           Terbaru
+        </a>
+
+        <a href="{{ route('admin.auctions.index', ['sort' => 'waktu_lama']) }}" 
+           class="px-3 py-1 rounded-lg text-[10px] font-bold uppercase transition {{ request('sort') == 'waktu_lama' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200' }}">
+           Terlama
         </a>
     </div>
 
@@ -47,21 +72,24 @@
                     </td>
                     <td class="px-6 py-4">
                         <div class="flex justify-center gap-2">
-                            {{-- Fitur Laporan PDF (Perbaikan: diletakkan di dalam loop) --}}
+                            {{-- Ikon PDF (Tetap) --}}
                             <a href="{{ route('admin.auctions.report', $auction->id) }}" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Cetak Laporan PDF">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9h1.5m1.5 0H13m-4 4h4m-4 4h4"/></svg>
                             </a>
 
+                            {{-- Ikon Show (Tetap) --}}
                             <a href="{{ route('admin.auctions.show', $auction->id) }}" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Lihat Detail Penawar">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             </a>
 
+                            {{-- Ikon Edit (Tetap) --}}
                             <a href="{{ route('admin.auctions.edit', $auction->id) }}" class="p-2 text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Ubah Data">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                 </svg>
                             </a>
 
+                            {{-- Ikon Hapus (Tetap) --}}
                             <form action="{{ route('admin.auctions.destroy', $auction->id) }}" method="POST" class="inline">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" onclick="return confirm('Hapus sesi lelang ini?')" title="Hapus">
@@ -73,12 +101,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-12 text-center">
-                        <div class="flex flex-col items-center">
-                            <svg class="w-12 h-12 text-gray-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                            <p class="text-gray-400 font-medium">Belum ada sesi lelang yang aktif.</p>
-                        </div>
-                    </td>
+                    <td colspan="5" class="px-6 py-12 text-center text-gray-400">Belum ada sesi lelang yang aktif.</td>
                 </tr>
                 @endforelse
             </tbody>
