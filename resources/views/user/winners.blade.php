@@ -1,148 +1,103 @@
 @extends('layouts.user')
 
 @section('content')
-<div class="max-w-7xl mx-auto px-4 py-16">
-    {{-- Header --}}
-    <div class="mb-12">
-        <h1 class="text-5xl font-black text-black uppercase mb-2">🏆 Daftar Pemenang</h1>
-        <p class="text-gray-400 text-lg">Lelang yang telah selesai dan pemenangnya</p>
+<div class="bg-[#F8FAFC] min-h-screen">
+    {{-- Hero Section - Diselaraskan dengan gaya Header Admin --}}
+    <div class="max-w-7xl mx-auto px-4 pt-20 pb-12">
+        <div class="bg-white p-10 rounded-[24px] shadow-sm border border-gray-100">
+            <div class="text-left">
+                <h1 class="text-[10px] font-bold text-blue-600 uppercase tracking-[0.3em] mb-4">Lelang Selesai</h1>
+                <h2 class="text-4xl font-bold text-slate-900 tracking-tighter uppercase">
+                    Daftar Pemenang Lelang
+                </h2>
+                <p class="mt-4 text-slate-500 max-w-xl text-lg font-medium leading-relaxed">
+                    Daftar resmi barang-barang yang telah terjual kepada penawar tertinggi melalui proses yang transparan.
+                </p>
+            </div>
+        </div>
     </div>
 
-    {{-- Content --}}
-    @if($winners->count() > 0)
-        <div class="space-y-6">
-            @foreach($winners as $item)
-                @php
-                    $auction = $item['auction'];
-                    $winningBid = $item['winning_bid'];
-                    $winner = $item['winner'];
-                    $isMyWin = $winner && Auth::check() && $winner->id === Auth::id();
-                @endphp
+    {{-- List Pemenang dengan Kotak Pembatas Lembut --}}
+    <div class="max-w-7xl mx-auto px-4 pb-24">
+        @if($winners->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                @foreach($winners as $item)
+                    @php
+                        $auction = $item['auction'];
+                        $winningBid = $item['winning_bid'];
+                        $winner = $item['winner'];
+                        $isMyWin = $winner && Auth::check() && $winner->id === Auth::id();
+                    @endphp
 
-                <div class="bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border-2 {{ $isMyWin ? 'border-yellow-400' : 'border-gray-700' }} hover:border-blue-500 transition">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {{-- Kotak Utama Pemenang - Radius disesuaikan agar tidak tajam --}}
+                    <div class="group bg-white border {{ $isMyWin ? 'border-yellow-400 shadow-xl shadow-yellow-50' : 'border-gray-100 shadow-sm' }} rounded-[20px] overflow-hidden flex flex-col transition-all duration-500 hover:shadow-md">
 
-                        {{-- Gambar Barang --}}
-                        <div class="relative bg-gray-900 p-6 flex items-center justify-center">
+                        {{-- Area Gambar (Grayscale untuk barang terjual) --}}
+                        <div class="relative aspect-square overflow-hidden bg-slate-50 border-b border-gray-50">
                             @if($auction->item->foto)
-                                <img src="{{ asset('images/items/' . $auction->item->foto) }}" class="w-full h-64 object-cover rounded-2xl shadow-lg">
+                                <img src="{{ asset('images/items/' . $auction->item->foto) }}"
+                                     class="w-full h-full object-cover grayscale transition-all duration-700 group-hover:grayscale-0">
                             @else
-                                <div class="w-full h-64 bg-gray-700 rounded-2xl flex items-center justify-center">
-                                    <span class="text-gray-500 text-6xl">📦</span>
+                                <div class="w-full h-full flex items-center justify-center text-slate-200 uppercase tracking-widest font-bold text-xs">
+                                    Tanpa Gambar
                                 </div>
                             @endif
+
+                            {{-- Label Terjual - Pill Style --}}
+                            <div class="absolute top-4 right-4 bg-slate-900/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                                <span class="text-[9px] font-bold text-white uppercase tracking-wider">Sold Out</span>
+                            </div>
 
                             @if($isMyWin)
-                                <div class="absolute top-4 left-4">
-                                    <span class="bg-yellow-400 text-gray-900 px-4 py-2 rounded-full text-sm font-black uppercase shadow-lg">
-                                        🎉 Anda Menang!
+                                <div class="absolute top-4 left-4 bg-yellow-400 px-4 py-1.5 rounded-full shadow-sm border border-yellow-300">
+                                    <span class="text-[10px] font-extrabold text-gray-900 uppercase tracking-tight">Anda Memenangkannya</span>
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- Area Konten --}}
+                        <div class="p-8 flex flex-col flex-grow">
+                            <div class="mb-6">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Lot #{{ str_pad($auction->id, 4, '0', STR_PAD_LEFT) }}</p>
+                                    <span class="w-1 h-1 bg-slate-200 rounded-full"></span>
+                                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ $auction->updated_at->format('d M Y') }}</p>
+                                </div>
+                                <h3 class="text-xl font-bold text-slate-900 uppercase tracking-tight leading-tight group-hover:text-blue-600 transition-colors">
+                                    {{ $auction->item->nama }}
+                                </h3>
+                            </div>
+
+                            {{-- Info Harga Menang --}}
+                            <div class="mt-auto pt-6 border-t border-slate-50">
+                                <div class="bg-slate-50 p-5 rounded-xl border border-slate-100 mb-5">
+                                    <span class="text-[10px] text-slate-400 font-bold uppercase tracking-widest block mb-1">Harga Final</span>
+                                    <span class="text-2xl font-extrabold text-blue-600 tracking-tighter">
+                                        Rp{{ number_format($winningBid->penawaran_harga ?? 0, 0, ',', '.') }}
                                     </span>
                                 </div>
-                            @endif
-                        </div>
 
-                        {{-- Info Lelang --}}
-                        <div class="p-8 md:col-span-2">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <h2 class="text-3xl font-black text-white uppercase mb-2">{{ $auction->item->nama }}</h2>
-                                    <p class="text-gray-400 text-sm">{{ $auction->item->deskripsi_barang }}</p>
-                                </div>
-                                <span class="bg-gray-700 text-gray-300 px-4 py-1 rounded-full text-xs font-bold uppercase border border-gray-600">
-                                    DITUTUP
-                                </span>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4 mb-6">
-                                {{-- Harga Awal --}}
-                                <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
-                                    <p class="text-xs text-gray-500 uppercase font-bold mb-1">Harga Awal</p>
-                                    <p class="text-lg font-black text-gray-300">Rp {{ number_format($auction->item->harga_awal, 0, ',', '.') }}</p>
-                                </div>
-
-                                {{-- Total Bid --}}
-                                <div class="bg-gray-900 p-4 rounded-xl border border-gray-700">
-                                    <p class="text-xs text-gray-500 uppercase font-bold mb-1">Total Penawaran</p>
-                                    <p class="text-lg font-black text-gray-300">{{ $auction->bids->count() }} Bid</p>
-                                </div>
-                            </div>
-
-                            <hr class="my-6 border-gray-700">
-
-                            {{-- Pemenang --}}
-                            @if($winningBid && $winner)
-                                <div class="bg-gradient-to-r from-yellow-900/30 to-yellow-800/30 p-6 rounded-2xl border-2 border-yellow-600">
-                                    <div class="flex items-center justify-between">
-                                        <div class="flex items-center gap-4">
-                                            <div class="bg-yellow-500 w-16 h-16 rounded-full flex items-center justify-center shadow-lg">
-                                                <span class="text-3xl">👑</span>
-                                            </div>
-                                            <div>
-                                                <p class="text-xs text-yellow-400 uppercase font-bold mb-1">Pemenang Lelang</p>
-                                                <p class="text-2xl font-black text-white uppercase">{{ $winner->name }}</p>
-                                                <p class="text-sm text-yellow-400">{{ $winner->email }}</p>
-                                            </div>
-                                        </div>
-                                        <div class="text-right">
-                                            <p class="text-xs text-yellow-400 uppercase font-bold mb-1">Harga Menang</p>
-                                            <p class="text-3xl font-black text-yellow-400">Rp {{ number_format($winningBid->penawaran_harga, 0, ',', '.') }}</p>
-                                        </div>
+                                {{-- Nama Pemenang --}}
+                                <div class="flex items-center gap-3 px-1">
+                                    <div class="w-9 h-9 bg-slate-900 text-white flex items-center justify-center rounded-full text-[11px] font-bold">
+                                        {{ strtoupper(substr($winner->name ?? '?', 0, 1)) }}
+                                    </div>
+                                    <div class="truncate">
+                                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest leading-none mb-1.5">Pemenang</p>
+                                        <p class="text-sm font-bold text-slate-900 uppercase truncate">{{ $winner->name ?? 'Tidak ada penawar' }}</p>
                                     </div>
                                 </div>
-                            @else
-                                <div class="bg-gray-900 p-6 rounded-2xl border-2 border-dashed border-gray-700 text-center">
-                                    <p class="text-gray-500 font-semibold">Tidak ada pemenang (tidak ada penawaran)</p>
-                                </div>
-                            @endif
-
-                            {{-- Top 3 Bidders --}}
-                            @if($auction->bids->count() > 0)
-                                <div class="mt-6">
-                                    <h3 class="text-sm font-black text-gray-300 uppercase mb-3">🏅 Top 3 Penawaran Tertinggi</h3>
-                                    <div class="space-y-2">
-                                        @foreach($auction->bids()->orderBy('penawaran_harga', 'desc')->take(3)->get() as $index => $bid)
-                                            <div class="flex justify-between items-center bg-gray-900 p-3 rounded-xl border {{ $index === 0 ? 'border-yellow-500' : 'border-gray-700' }}">
-                                                <div class="flex items-center gap-3">
-                                                    <span class="text-lg font-black {{ $index === 0 ? 'text-yellow-400' : 'text-gray-500' }}">
-                                                        #{{ $index + 1 }}
-                                                    </span>
-                                                    <div>
-                                                        <p class="font-bold {{ $bid->user_id === Auth::id() ? 'text-blue-400' : 'text-white' }}">
-                                                            {{ $bid->user->name }}
-                                                            @if($bid->user_id === Auth::id())
-                                                                <span class="text-xs text-blue-400">(Anda)</span>
-                                                            @endif
-                                                        </p>
-                                                        <p class="text-xs text-gray-500">{{ $bid->created_at->diffForHumans() }}</p>
-                                                    </div>
-                                                </div>
-                                                <p class="font-black {{ $index === 0 ? 'text-yellow-400' : 'text-gray-300' }}">
-                                                    Rp {{ number_format($bid->penawaran_harga, 0, ',', '.') }}
-                                                </p>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endif
+                            </div>
                         </div>
-
                     </div>
-                </div>
-            @endforeach
-        </div>
-    @else
-        {{-- Empty State --}}
-        <div class="bg-gray-800 rounded-3xl shadow-2xl p-16 text-center border-2 border-dashed border-gray-700">
-            <div class="text-8xl mb-6">🏆</div>
-            <h2 class="text-3xl font-black text-white uppercase mb-4">Belum Ada Lelang yang Ditutup</h2>
-            <p class="text-gray-400 mb-8 text-lg">Belum ada lelang yang selesai dan memiliki pemenang</p>
-            <a href="{{ route('user.index') }}" class="inline-block bg-blue-600 text-white px-8 py-4 rounded-xl font-bold uppercase hover:bg-blue-500 transition">
-                Lihat Lelang Aktif
-            </a>
-        </div>
-    @endif
-
+                @endforeach
+            </div>
+        @else
+            <div class="py-32 text-center bg-white rounded-[24px] border border-dashed border-slate-200">
+                <div class="text-5xl mb-6 opacity-20"></div>
+                <h2 class="text-sm font-bold text-slate-300 uppercase tracking-[0.4em]">Belum ada riwayat pemenang</h2>
+            </div>
+        @endif
+    </div>
 </div>
-
 @endsection
-
