@@ -17,7 +17,7 @@ class ProfileController extends Controller
     public function edit(Request $request): View
     {
         $user = $request->user();
-        
+
         // Cek role user
         if ($user->role === 'admin') {
             // Jika admin, tampilkan view admin
@@ -37,14 +37,18 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        // Isi model user dengan data tervalidasi (name, email, phone, address, dll)
         $request->user()->fill($request->validated());
 
+        // Jika email berubah, reset verifikasi email
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
 
+        // Simpan perubahan ke database
         $request->user()->save();
 
+        // Redirect kembali ke halaman edit profil
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }
 

@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-4xl mx-auto px-4 py-16">
     <div class="bg-white rounded-3xl shadow-2xl p-12 border border-gray-100">
-        
+
         <h1 class="text-4xl font-black text-gray-900 uppercase italic mb-2">Profil Saya</h1>
         <p class="text-gray-500 mb-8">Kelola informasi akun Anda</p>
 
@@ -22,9 +22,9 @@
             {{-- Nama --}}
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Nama Lengkap</label>
-                <input 
-                    type="text" 
-                    name="name" 
+                <input
+                    type="text"
+                    name="name"
                     value="{{ old('name', $user->name) }}"
                     class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-teal-600 focus:ring-0 transition @error('name') border-red-500 @enderror"
                     required
@@ -37,9 +37,9 @@
             {{-- Email --}}
             <div>
                 <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Email</label>
-                <input 
-                    type="email" 
-                    name="email" 
+                <input
+                    type="email"
+                    name="email"
                     value="{{ old('email', $user->email) }}"
                     class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-teal-600 focus:ring-0 transition @error('email') border-red-500 @enderror"
                     required
@@ -47,10 +47,47 @@
                 @error('email')
                     <p class="text-red-500 text-sm mt-1 font-semibold">{{ $message }}</p>
                 @enderror
-                
+
                 @if($user->email_verified_at === null)
                     <p class="text-amber-600 text-sm mt-2 font-semibold">⚠️ Email belum diverifikasi.</p>
                 @endif
+            </div>
+
+            {{-- Nomor HP --}}
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                    Nomor HP
+                </label>
+                <input
+                    type="text"
+                    name="phone"
+                    value="{{ old('phone', $user->phone) }}"
+                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3
+                           focus:border-teal-600 focus:ring-0 transition
+                           @error('phone') border-red-500 @enderror"
+                    placeholder="Contoh: 0812xxxxxxx"
+                >
+                @error('phone')
+                    <p class="text-red-500 text-sm mt-1 font-semibold">{{ $message }}</p>
+                @enderror
+            </div>
+
+            {{-- Alamat Lengkap --}}
+            <div>
+                <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">
+                    Alamat Lengkap
+                </label>
+                <textarea
+                    name="address"
+                    rows="3"
+                    class="w-full border-2 border-gray-200 rounded-xl px-4 py-3
+                           focus:border-teal-600 focus:ring-0 transition
+                           @error('address') border-red-500 @enderror"
+                    placeholder="Tulis alamat lengkap untuk pengiriman / konfirmasi"
+                >{{ old('address', $user->address) }}</textarea>
+                @error('address')
+                    <p class="text-red-500 text-sm mt-1 font-semibold">{{ $message }}</p>
+                @enderror
             </div>
 
             <hr class="border-gray-200">
@@ -63,15 +100,15 @@
 
             {{-- Buttons --}}
             <div class="flex gap-4">
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     class="flex-1 bg-teal-600 text-white font-black py-4 rounded-xl uppercase tracking-widest hover:bg-teal-700 shadow-lg transition transform active:scale-95"
                 >
                     Simpan Perubahan
                 </button>
-                
-                <a 
-                    href="{{ route('user.index') }}" 
+
+                <a
+                    href="{{ route('user.index') }}"
                     class="flex-1 bg-gray-200 text-gray-700 font-black py-4 rounded-xl uppercase tracking-widest hover:bg-gray-300 transition text-center flex items-center justify-center"
                 >
                     Batal
@@ -82,7 +119,7 @@
         {{-- Update Password Section --}}
         <div class="mt-12 pt-12 border-t-2 border-gray-100">
             <h2 class="text-2xl font-black text-gray-900 uppercase mb-6">Ubah Password</h2>
-            
+
             <form action="{{ route('password.update') }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
@@ -90,9 +127,9 @@
                 {{-- Current Password --}}
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Password Saat Ini</label>
-                    <input 
-                        type="password" 
-                        name="current_password" 
+                    <input
+                        type="password"
+                        name="current_password"
                         class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-teal-600 focus:ring-0 transition @error('current_password', 'updatePassword') border-red-500 @enderror"
                         required
                     >
@@ -104,9 +141,9 @@
                 {{-- New Password --}}
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Password Baru</label>
-                    <input 
-                        type="password" 
-                        name="password" 
+                    <input
+                        type="password"
+                        name="password"
                         class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-teal-600 focus:ring-0 transition @error('password', 'updatePassword') border-red-500 @enderror"
                         required
                     >
@@ -118,16 +155,16 @@
                 {{-- Confirm Password --}}
                 <div>
                     <label class="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wide">Konfirmasi Password Baru</label>
-                    <input 
-                        type="password" 
-                        name="password_confirmation" 
+                    <input
+                        type="password"
+                        name="password_confirmation"
                         class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 focus:border-teal-600 focus:ring-0 transition"
                         required
                     >
                 </div>
 
-                <button 
-                    type="submit" 
+                <button
+                    type="submit"
                     class="w-full bg-amber-600 text-white font-black py-4 rounded-xl uppercase tracking-widest hover:bg-amber-700 shadow-lg transition transform active:scale-95"
                 >
                     Update Password

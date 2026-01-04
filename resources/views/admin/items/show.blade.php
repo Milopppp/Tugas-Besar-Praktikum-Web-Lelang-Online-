@@ -21,7 +21,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Nama Barang</label>
-                    <p class="text-xl font-bold text-gray-800">{{ $item->nama_barang }}</p>
+                    <p class="text-xl font-bold text-gray-800">{{ $item->nama }}</p>
                 </div>
                 <div>
                     <label class="text-[10px] font-black uppercase text-gray-400 tracking-widest">Harga Awal</label>

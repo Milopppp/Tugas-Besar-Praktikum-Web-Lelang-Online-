@@ -32,6 +32,6 @@ class Auction extends Model
     // Relasi ke Bids (Satu lelang memiliki banyak tawaran)
     public function bids()
     {
-        return $this->hasMany(Bid::class);
+        return $this->hasMany(Bid::class, 'auction_id');
     }
 }
