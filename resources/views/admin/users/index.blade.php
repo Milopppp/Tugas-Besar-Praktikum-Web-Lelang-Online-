@@ -16,6 +16,7 @@
                     <th class="px-6 py-4 font-bold border-b">Nama Lengkap</th>
                     <th class="px-6 py-4 font-bold border-b">Email</th>
                     <th class="px-6 py-4 font-bold border-b">Telepon</th>
+                    <th class="px-6 py-4 font-bold border-b">Alamat</th>
                     <th class="px-6 py-4 font-bold border-b text-center">Aksi</th>
                 </tr>
             </thead>
@@ -24,7 +25,8 @@
                 <tr class="hover:bg-gray-50 transition">
                     <td class="px-6 py-4 font-bold text-gray-900">{{ $user->name }}</td>
                     <td class="px-6 py-4 text-sm text-gray-600">{{ $user->email }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-600">{{ $user->telp ?? '-' }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600">{{ $user->phone }}</td>
+                    <td class="px-6 py-4 text-sm text-gray-600">{{ $user->address }}</td>
                     <td class="px-6 py-4 text-center">
                         <form action="{{ route('admin.users.destroy', $user->id) }}" method="POST" class="inline">
                             @csrf @method('DELETE')
