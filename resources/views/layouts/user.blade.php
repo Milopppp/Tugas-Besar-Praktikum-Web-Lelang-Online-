@@ -136,7 +136,7 @@
                     <ul class="space-y-2 text-sm text-gray-400">
                         <li>Email: info@lelangpro.com</li>
                         <li>Telp: (021) 1234-5678</li>
-                        <li>Alamat: Jakarta, Indonesia</li>
+                        <li>Alamat: Garut, Indonesia</li>
                     </ul>
                 </div>
             </div>

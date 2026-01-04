@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
 
         Route::delete('/admin/users/{id}', [UserController::class, 'destroy'])
             ->name('admin.users.destroy');
+
+        Route::get('/admin/auctions/{id}/report', [AuctionController::class, 'generatePDF'])->name('admin.auctions.report');
     });
 });
 
